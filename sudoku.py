@@ -32,6 +32,8 @@ background_color = (184, 237, 252)
 background_other_color = (220, 245, 252)
 selected_color = (200, 50, 100)
 
+solve_button_location = background_size[0] + 50, 400
+
 # Start of code
 py.init()
 class Game:
@@ -65,14 +67,19 @@ class Game:
         self.solve_button = py.Surface((100, 50))
         self.solve_button.fill(BLUE2)
         screen.blit(self.solve_button, (background_size[0] + 50, 400))
-        
+    
+    def refresh_board(self, board):
+        self._board = board
+        for i in range(9):
+            for j in range(9):
+                self.squares[i][j].update_correct_number(board[i][j])
 
     def show_grid(self):
         for i in range(9):
             for j in range(9):
                 screen.blit(self.squares[i][j].surface, (square_width * j, square_width * i))
 
-    def show_border_and_number(self):
+    def show_border(self):
         for i in range(9):
             for j in range(9):
                 if i == self._selectedy and j == self._selectedx:
@@ -80,7 +87,16 @@ class Game:
                 else:
                     self.squares[i][j].update_grid(False)
     
-                self.squares[i][j].write_number()
+    def show_correct_numbers(self):
+        for i in range(9):
+            for j in range(9):
+                self.squares[i][j].display_correct_number()
+
+    def show_memo_numbers(self):
+        for i in range(9):
+            for j in range(9):
+                self.squares[i][j].display_memo_number()
+        return
 
     def select_grid(self, x, y):
         # highlight the grid selected (x and y coordinates of 9x9 grid)
@@ -116,7 +132,8 @@ class Game:
         col = self._selectedx
         square = self.squares[row][col]
         self._board[row][col] = square.get_memo_number()
-        square.update_number()
+        square.change_memo_to_correct()
+        square.set_memo_number(0)
 
     def enter_wrong_number(self):
         # things happen if you enter wrong number 
@@ -146,12 +163,15 @@ class Game:
             text = font.render("Solve", 1, BLACK)
             textpos = text.get_rect(center=(50, 25))
             self.solve_button.blit(text, textpos)
-        screen.blit(self.solve_button, (background_size[0] + 50, 400))
+        screen.blit(self.solve_button, solve_button_location)
         return
     
     def solve_button_clicked(self):
         
         return
+    
+    def get_board(self):
+        return self._board
 
 class Grid:
     def __init__(self, num, x, y):
@@ -178,12 +198,15 @@ class Grid:
             self.surface.fill(self._color)
             py.draw.rect(self.surface, BLACK, ((0, 0), square_size), 1)
     
-    def update_number(self):
+    def change_memo_to_correct(self):
         # memo'ed number shows up as number
         self.number = self._memo
         self._memo = 0
+
+    def update_correct_number(self, number):
+        self.number = number
     
-    def write_number(self):
+    def display_correct_number(self):
         # Writes number to square
         if not py.font:
             print("font not loaded")
@@ -196,8 +219,13 @@ class Grid:
             textpos = text.get_rect(center=(square_width // 2, square_width // 2))
             self.surface.blit(text, textpos)
             return
+    
+    def display_memo_number(self):
+        if not py.font:
+            print("font not loaded")
+            return
         
-        if self._memo != 0:
+        if self.number == 0 and self._memo != 0:
             # render memo'ed number
             font = py.font.SysFont("arial", 17, False, True)
             text = font.render(str(self._memo), 1, BLACK)
@@ -223,6 +251,9 @@ mouse_clicked = False
 selected_square = None
 all_correct = True
 game_over = False
+# For the solve button event
+click_solve_button = False
+solve_button_event = py.USEREVENT + 1
 
 def clicked_square(valx, valy):
     # Given the x and y coordinates of clicked position,
@@ -232,6 +263,9 @@ def clicked_square(valx, valy):
     return [valx // square_width, valy // square_width]
 
 while 1:
+    #
+    # Keyboard / Mouse clicks
+    # 
     for event in py.event.get():
         if event.type == py.QUIT: 
             # Exit = quit game
@@ -245,6 +279,12 @@ while 1:
         elif event.type == py.MOUSEBUTTONUP:
             # mouse click 
             mousex, mousey = event.pos
+
+            # Check if SOLVE button is clicked
+            if g.solve_button.get_rect().collidepoint(mousex - solve_button_location[0], 
+                mousey - solve_button_location[1]):
+                print("solve button clicked!")
+                py.time.set_timer(solve_button_event, 300)
 
             # Check if mouse clicks one of the squares
             selected_square = clicked_square(mousex, mousey)
@@ -270,7 +310,7 @@ while 1:
                 selected_square[0] = (selected_square[0] + 1) % 9
                 
 
-        elif event.type == py.KEYUP and event.key >= 49 and event.key <= 57:
+        elif event.type == py.KEYUP and event.key >= 48 and event.key <= 57:
             # key pressed is between 0 and 9
             input_number = event.key - 48
             g.memo_number(input_number) # don't memo if number is already filled
@@ -286,8 +326,18 @@ while 1:
                 else:
                     all_correct = False
                     g.enter_wrong_number()
+        
+        if event.type == solve_button_event:
+            print("Executing solve")
+            # Enter code that visualizes the numbers
+            current_board = g.get_board()
+
+            unsolved_row, unsolved_col = ss.next_empty_box(current_board, 0, 0)
             
 
+    #
+    # Show on screen
+    #
 
     # Background (white)
     screen.fill(WHITE)
@@ -301,7 +351,9 @@ while 1:
     
     # 9x9 grid with borders
     g.show_grid()
-    g.show_border_and_number()
+    g.show_border()
+    g.show_correct_numbers()
+    g.show_memo_numbers()
 
     # display text showing # of wrong attempts
     if not all_correct:

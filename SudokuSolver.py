@@ -1,4 +1,4 @@
-### todo: can_solve always returns True - FIX THIS
+
 def can_solve(board, row, col, num):
     # return True if num at (row, col) can result in a correct answer
     # return False otherwise
