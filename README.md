@@ -12,6 +12,6 @@ When you want to see the game solve the puzzle, click the solve button.
 
 ## Demo
 Shown below are 2 GIFs (technically one GIF cut in half).
-![alt text](https://github.com/danwsc09/pysudoku/assets/sudoku1.gif "Demo 1")
-![alt text](https://github.com/danwsc09/pysudoku/assets/sudoku2.gif "Demo 2")
+![Demo 1](https://github.com/danwsc09/pysudoku/blob/master/assets/sudoku1.gif "Demo 1")
+![Demo 2](https://github.com/danwsc09/pysudoku/blob/master/assets/sudoku2.gif "Demo 2")
 
