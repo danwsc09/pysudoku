@@ -124,7 +124,9 @@ def print_board(board):
 def check_row_col_box(board, row, col, n):
     # return True if board[row][col] = n results in a possible answer
     # return False if its not possible to reach an answer
-    
+    if n == 0:
+        return False
+        
     # if duplicate in row, return False
     dict_row = {}
     for i in range(9):
@@ -160,31 +162,34 @@ def check_row_col_box(board, row, col, n):
 
 if __name__ == '__main__':
     board = [
-        [0,0,0,2,6,0,7,0,1],
-        [6,8,0,0,7,0,0,9,0],
-        [1,9,0,0,0,4,5,0,0],
-        [8,2,0,1,0,0,0,4,0],
-        [0,0,4,6,0,2,9,0,0],
-        [0,5,0,0,0,3,0,2,8],
-        [0,0,9,3,0,0,0,7,4],
-        [0,4,0,0,5,0,0,3,6],
-        [7,0,3,0,1,8,0,0,0]
+        [5,3,0,0,7,0,0,0,0],
+        [6,0,0,1,9,5,0,0,0],
+        [0,9,8,0,0,0,0,6,0],
+        [8,0,0,0,6,0,0,0,3],
+        [4,0,0,8,0,3,0,0,1],
+        [7,0,0,0,2,0,0,0,6],
+        [0,6,0,0,0,0,2,8,0],
+        [0,0,0,4,1,9,0,0,5],
+        [0,0,0,0,8,0,0,7,9]
     ]
-    if can_solve(board, 2, 2, 7):
-        print("7 is ok at (2, 2)")
-    else:
-        print("7 is not ok at (2, 2)")
-    if can_solve(board, 2, 2, 1):
-        print("1 is ok at (2, 2)")
-    else:
-        print("1 is not ok at (2, 2)")
+    row, col = next_empty_box(board, 0, 0)
+    solve(board, row, col)
+    print(board)
+    # if can_solve(board, 2, 2, 7):
+    #     print("7 is ok at (2, 2)")
+    # else:
+    #     print("7 is not ok at (2, 2)")
+    # if can_solve(board, 2, 2, 1):
+    #     print("1 is ok at (2, 2)")
+    # else:
+    #     print("1 is not ok at (2, 2)")
     
-    if can_solve(board, 6, 0, 5):
-        print("5 is ok at (0, 6)")
-    else:
-        print("5 is not ok at (0, 6)")
-    board[6][0] = 5
-    if can_solve(board, 6, 1, 5):
-        print("5 is ok at (1, 6)")
-    else:
-        print("5 is not ok at (1, 6)")
+    # if can_solve(board, 6, 0, 5):
+    #     print("5 is ok at (0, 6)")
+    # else:
+    #     print("5 is not ok at (0, 6)")
+    # board[6][0] = 5
+    # if can_solve(board, 6, 1, 5):
+    #     print("5 is ok at (1, 6)")
+    # else:
+    #     print("5 is not ok at (1, 6)")
