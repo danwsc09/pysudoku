@@ -13,34 +13,11 @@ board = [
     [0,4,0,0,5,0,0,3,6],
     [7,0,3,0,1,8,0,0,0]
 ]
-# board = [
-#     [5,3,0,0,7,0,0,0,0],
-#     [6,0,0,1,9,5,0,0,0],
-#     [0,9,8,0,0,0,0,6,0],
-#     [8,0,0,0,6,0,0,0,3],
-#     [4,0,0,8,0,3,0,0,1],
-#     [7,0,0,0,2,0,0,0,6],
-#     [0,6,0,0,0,0,2,8,0],
-#     [0,0,0,4,1,9,0,0,5],
-#     [0,0,0,0,8,0,0,7,9]
-# ]
-
-# board = [
-#     [0,9,0,0,0,5,0,0,0],
-#     [0]*9,
-#     [0,0,0,0,0,0,0,2,0],
-#     [0,0,0,4,0,0,0,0,0],
-#     [0,0,3,0,5,0,7,0,0],
-#     [0,0,0,0,0,6,0,0,0],
-#     [0,8,0,0,0,4,0,0,0],
-#     [0,0,0,0,0,0,0,0,0],
-#     [0,0,0,5,0,0,0,1,0]
-# ]
 
 
 #################################################################
 # Change this value to change how fast you want the visualization
-solve_speed = 50   # the smaller the number, the faster it is
+solve_speed = 100   # the smaller the number, the faster it is
 #################################################################
 
 FPS = 60
@@ -52,7 +29,7 @@ BLACK = (10, 10, 10)
 RED = (250, 0, 0)
 WRONG_LIMIT = 10
 
-size = (700, 500)
+size = (650, 500)
 square_width = 50
 square_size = (square_width, square_width)
 background_size = (450, 450)
@@ -65,6 +42,7 @@ solve_button_location = background_size[0] + 50, 400
 
 # Start of code
 py.init()
+py.display.set_caption("Sudoku Puzzle")
 class Game:
     def __init__(self, board):
         self._board = board
@@ -164,6 +142,16 @@ class Game:
         # adopts memo'd number as correct number
         square.change_memo_to_correct()
         square.set_memo_number(0)
+
+        # change solve text if done
+        done = True
+        for i in range(9):
+            for j in range(9):
+                if self._board[i][j] == 0:
+                    done = False
+                    break
+        if done:
+            self.solve_button_text = "Yay!"
 
     def enter_wrong_number(self):
         # wrong count goes up by 1 if user enters wrong number 
